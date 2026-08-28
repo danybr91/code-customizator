@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generar VSIX",
+      "type": "shell",
+      "command": "npm run package",
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Empaqueta la extensión en un archivo .vsix (code-customizator-<version>.vsix)."
+    },
+    {
+      "label": "Instalar en VS Code",
+      "type": "shell",
+      "command": "code --install-extension (Get-ChildItem -Path . -Filter code-customizator-*.vsix | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName)",
+      "group": "none",
+      "problemMatcher": [],
+      "detail": "Instala el VSIX más reciente en la instancia de VS Code."
+    }
+  ]
+}

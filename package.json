@@ -1,0 +1,115 @@
+{
+  "name": "code-customizator",
+  "displayName": "Code customizator",
+  "description": "Selector de color para la barra superior del workspace y personalización de título de pestañas.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danybr91/code-customizator.git"
+  },
+  "author": "danybr91",
+  "icon": "doc/icon.png",
+  "categories": [
+    "Customization"
+  ],
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Code customizator",
+      "properties": {
+        "codeCustomizator.colors": {
+          "type": "array",
+          "default": [],
+          "description": "Colores personalizados adicionales del selector. Se guardan en los ajustes de usuario.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "color", "inactive", "foreground", "inactiveForeground"],
+            "properties": {
+              "name": { "type": "string", "description": "Nombre mostrado en el menú." },
+              "color": { "type": "string", "format": "color", "description": "Fondo activo." },
+              "inactive": { "type": "string", "format": "color", "description": "Fondo inactivo." },
+              "foreground": { "type": "string", "format": "color", "description": "Texto activo." },
+              "inactiveForeground": { "type": "string", "format": "color", "description": "Texto inactivo." }
+            },
+            "defaultSnippets": [
+              {
+                "label": "Nuevo color",
+                "body": {
+                  "name": "$1",
+                  "color": "#00A651",
+                  "inactive": "#007A3D",
+                  "foreground": "#FFFFFF",
+                  "inactiveForeground": "#D8D8D8"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "codeCustomizator.changeTitleBarColor",
+        "title": "Cambiar color barra de título"
+      },
+      {
+        "command": "codeCustomizator.changeTabTitle",
+        "title": "Asignar título personalizado"
+      },
+      {
+        "command": "codeCustomizator.editCustomColors",
+        "title": "Personalizar colores de la barra de título"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "codeCustomizator.changeTitleBarColor"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "codeCustomizator.changeTabTitle",
+          "group": "9_codeCustomizator"
+        }
+      ],
+      "statusBar": [
+        {
+          "command": "codeCustomizator.changeTitleBarColor",
+          "group": "navigation",
+          "when": "workspaceFolder"
+        }
+      ],
+      "window": [
+        {
+          "command": "codeCustomizator.changeTitleBarColor",
+          "group": "navigation",
+          "when": "workspaceFolder"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.3.0",
+    "vsce": "^2.15.0"
+  },
+  "readme": "README.md"
+}
