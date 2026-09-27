@@ -58,10 +58,83 @@ El título queda asociado a la ruta del fichero y se muestra aunque cambies de p
 - VS Code ≥ 1.88.0
 - Un workspace abierto (carpeta de proyecto)
 
-## Instalación
+## Compilar desde el código
+
+Para compilar y generar el `.vsix` necesitas **Node.js ≥ 22** y npm (Node 22 es el mínimo que exige `@vscode/vsce` 4).
 
 ```bash
-code --install-extension code-customizator-1.0.0.vsix
+npm install
+```
+
+### Dependencias de desarrollo
+
+Se declaran en `devDependencies` de `package.json` y se instalan con `npm install` (no hay dependencias de runtime, la extensión no empaqueta `node_modules`):
+
+| Paquete | Versión | Para qué sirve |
+| --- | --- | --- |
+| `typescript` | `^5.3.0` | Compila `src/**/*.ts` a `out/` |
+| `@types/vscode` | `^1.88.0` | Tipos de la API de VS Code |
+| `@types/node` | `^20.10.0` | Tipos de Node (necesarios por `main: ./out/extension.js`) |
+| `@vscode/vsce` | `^4.0.0` | Empaqueta la extensión en un `.vsix` (sustituye al obsoleto `vsce`) |
+| `eslint` | `^10.11.0` | Linter |
+| `typescript-eslint` | `^8.70.1` | Parser y reglas para ESLint con TypeScript |
+
+### Comandos npm
+
+| Comando | Qué hace |
+| --- | --- |
+| `npm run build` | Compila `src/` → `out/extension.js` (borra `out/` antes) |
+| `npm run build:watch` | Igual, en modo watch (no borra `out/`) |
+| `npm run compile` | Alias de `build` |
+| `npm run lint` | ESLint sobre `src/` |
+| `npm run package` | Genera `code-customizator-<version>.vsix` en la raíz del proyecto |
+| `npm run vsix` | Alias de `package` |
+| `npm run bump` | Cambia la versión (ver siguiente sección) |
+
+`npm run package` no necesita un script previo: `vsce package` ejecuta por sí mismo el script `vscode:prepublish` de `package.json`, que es `npm run build`. El `.vsix` se llama `code-customizator-<version>.vsix` con la versión leída de `package.json`.
+
+Ejemplo de build completo:
+
+```bash
+npm install
+npm run build       # -> out/
+npm run package     # -> code-customizator-<version>.vsix
+```
+
+Desde VS Code puedes lanzar lo mismo con la tarea **Terminal > Ejecutar tarea > Generar VSIX** (`.vscode/tasks.json`).
+
+Notas:
+
+- `out/` y `*.vsix` están en `.gitignore`.
+- `.vscodeignore` excluye fuentes, scripts y configuración del `.vsix`; el paquete solo lleva `out/`, `doc/icon.png`, `README.md`, `CHANGELOG.md` y `LICENSE`.
+
+## Cambiar la versión
+
+```bash
+npm run bump -- patch        # 1.0.0 -> 1.0.1
+npm run bump -- minor        # 1.0.0 -> 1.1.0
+npm run bump -- major        # 1.0.0 -> 2.0.0
+npm run bump -- 1.2.0        # fija la versión explícita
+```
+
+El script actualiza `package.json` y `package-lock.json`. Añade `--changelog` para insertar también la sección `## [x.y.z]` al principio del `CHANGELOG.md`:
+
+```bash
+npm run bump -- minor --changelog
+```
+
+No hace commit ni crea tags de git; eso es cosa tuya:
+
+```bash
+git commit -am "v1.1.0" && git tag v1.1.0
+```
+
+## Instalación
+
+Desde el `.vsix` generado:
+
+```bash
+code --install-extension code-customizator-<version>.vsix
 ```
 
 ## Colores personalizados
